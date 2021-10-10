@@ -144,9 +144,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     function showModalByScroll() {
-        console.log(window.pageYOffset);
-        console.log(document.documentElement.clientHeight);
-        console.log(document.documentElement.scrollHeight);
+        //console.log(window.pageYOffset);
+       // console.log(document.documentElement.clientHeight);
+       // console.log(document.documentElement.scrollHeight);
         if ((window.pageYOffset +document.documentElement.clientHeight) >= document.documentElement.scrollHeight ) {
             openModalWindow();
             window.removeEventListener('scroll', showModalByScroll);//show just once
@@ -154,5 +154,67 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     window.addEventListener('scroll', showModalByScroll);
     
+    // use classes for add card to site
+    class MenuCard {
+        constructor(src, alt, title, description, price, parentSelector) {
+            this.src = src;
+            this.title = title;
+            this.alt= alt;
+            this.description =description;
+            this.price = price;
+            this.parent = document.querySelector(parentSelector);
+            this.exchCourse = 26.5;
+            this.changeToUan();
+        }
 
+        changeToUan() {
+            this.price = this.price * this.exchCourse;
+        }
+
+        render() {
+            const element = document.createElement('div');
+            element.innerHTML = `
+            <div class="menu__item">
+                <img src=${this.src} alt='${this.alt}'>
+                <h3 class="menu__item-subtitle">'${this.title}'</h3>
+                <div class="menu__item-descr">${this.description}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
+            </div>
+        `;
+        this.parent.append(element);
+        }
+    }
+
+
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        'Меню "Фитнес"',
+        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+        11,
+        '.menu .container'
+    ).render();//"vizov na meste" -- for using once--or use with constants
+        
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        'Меню "Постное"',
+        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
+        17,
+        '.menu .container'
+    ).render();
+
+
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "ellite",
+        'Меню “Премиум”',
+        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        21,
+        '.menu .container'
+    ).render();
 });
