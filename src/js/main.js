@@ -105,13 +105,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal'),
-        modalClose = document.querySelector('[data-close]'),
         openModalId = setTimeout(openModalWindow, 500000);//off
 
     function modalOpen() {
         modalTrigger.forEach((button) => {
-            button.addEventListener('click', openModalWindow);
-            modalClose.addEventListener('click', closeModalWindow);    
+            button.addEventListener('click', openModalWindow);   
         }) 
     }
 
@@ -130,7 +128,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
+        if (e.target === modal || e.target.getAttribute('data-close' ) == '') {
             closeModalWindow(); 
         }
     });
@@ -156,12 +154,13 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // use classes for add card to site
     class MenuCard {
-        constructor(src, alt, title, description, price, parentSelector) {
+        constructor(src, alt, title, description, price, parentSelector, ...classes) {
             this.src = src;
             this.title = title;
             this.alt= alt;
             this.description =description;
             this.price = price;
+            this.classes = classes;
             this.parent = document.querySelector(parentSelector);
             this.exchCourse = 26.5;
             this.changeToUan();
@@ -173,8 +172,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
         render() {
             const element = document.createElement('div');
+
+            if (this.classes.length === 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else {
+                this.classes.forEach(className => element.classList.add(className));
+
+            }
+
             element.innerHTML = `
-            <div class="menu__item">
                 <img src=${this.src} alt='${this.alt}'>
                 <h3 class="menu__item-subtitle">'${this.title}'</h3>
                 <div class="menu__item-descr">${this.description}</div>
@@ -183,8 +190,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     <div class="menu__item-cost">Цена:</div>
                     <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                 </div>
-            </div>
-        `;
+            `;
         this.parent.append(element);
         }
     }
@@ -196,7 +202,8 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         11,
-        '.menu .container'
+        '.menu .container',
+        "menu__item"
     ).render();//"vizov na meste" -- for using once--or use with constants
         
     new MenuCard(
@@ -205,7 +212,8 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Постное"',
         'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ',
         17,
-        '.menu .container'
+        '.menu .container',
+        "menu__item"
     ).render();
 
 
@@ -215,6 +223,99 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню “Премиум”',
         'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
         21,
-        '.menu .container'
+        '.menu .container',
     ).render();
+
+        //forms
+
+       const forms = document.querySelectorAll('form'),
+            message = {
+                loading : 'img/spinner.svg',
+                success: 'thanks we will phone you later',
+                failure: 'somthing wrong...'
+            };
+        
+        console.log(forms);
+        forms.forEach((item)=> {
+                postData(item);
+                
+            });
+
+
+       function postData(form) {
+           form.addEventListener('submit', (e) => {
+               e.preventDefault();
+              
+               
+               const statusMessage = document.createElement('img');
+               statusMessage.src = message.loading;
+               statusMessage.style.cssText = `
+                    display: block;
+                    margin: 0 auto;
+               `;
+               form.insertAdjacentElement('afterend', statusMessage);
+                setTimeout( () => {
+                    statusMessage.remove();
+                }, 2000); 
+
+               const request = new XMLHttpRequest();
+               request.open('POST', 'server.php');
+             //  request.setRequestHeader('Content-type', 'multipart/form-data');
+
+               const formData = new FormData(form);
+               
+            //JSON former
+
+            const obj = {};
+
+            formData.forEach( (value, key) => {
+                obj[key] = value;
+            });
+
+            const json = JSON.stringify(obj);
+            console.log(json);
+            request.send(json);
+
+               console.log(request.response);
+               request.addEventListener('load', () => {
+                   if (request.status === 200) {
+                        showThanksModal(message.success);
+                        form.reset();     
+                        statusMessage.remove();
+                   } else {
+                       showThanksModal(message.failure);
+                   }
+               });
+           });
+       }
+//show modal message 
+
+       function showThanksModal(message) {
+
+           const prevModalDialog = document.querySelector('.modal__dialog');
+
+           prevModalDialog.style.display = 'none';
+           modalOpen();
+
+           const thanksModal = document.createElement('div');
+            thanksModal.classList.add('modal__dialog');
+            thanksModal.innerHTML = `
+                <div class="modal__content">
+                    <div data-close class="modal__close">&times;</div>
+                    <div class="modal__title">${message}</div>
+
+               </div>
+            `;
+            document.querySelector('.modal').append(thanksModal);
+            setTimeout(() => {
+                thanksModal.remove();
+                prevModalDialog.style.display = 'block';
+                closeModalWindow();
+            }, 4000)
+
+
+       }
+
+
+
 });
