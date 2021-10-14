@@ -1,4 +1,4 @@
-"use strickt"
+"use strict"
 window.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tabheader__item'),
             tabsContent = document.querySelectorAll('.tabcontent'),
@@ -207,13 +207,21 @@ window.addEventListener('DOMContentLoaded', () => {
         return await res.json();
 
     };
-    getResourse('http://localhost:3000/menu')
+
+
+ /*    getResourse('http://localhost:3000/menu')
     .then(data => {
         data.forEach( ({img, altimg, title, descr, price}) => {
             new MenuCard(img, altimg, title, descr, price, '.menu .container', "menu__item").render();
         });
-    });
+    }); */
 
+    axios.get('http://localhost:3000/menu')
+            .then(data => {
+                data.data.forEach( ({img, altimg, title, descr, price}) => {
+                new MenuCard(img, altimg, title, descr, price, '.menu .container', "menu__item").render();
+            });
+        });
     /* new MenuCard(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -362,6 +370,4 @@ window.addEventListener('DOMContentLoaded', () => {
        /*  fetch('db.json')
         .then(data => data.json())
         .then(res => console.log(res)); */
-
-
 });
