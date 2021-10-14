@@ -1,5 +1,4 @@
 "use strickt"
-
 window.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tabheader__item'),
             tabsContent = document.querySelectorAll('.tabcontent'),
@@ -138,6 +137,9 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModalWindow(); 
         }
     })
+
+
+
     //scroll activation 
 
 
@@ -237,16 +239,14 @@ window.addEventListener('DOMContentLoaded', () => {
         
         console.log(forms);
         forms.forEach((item)=> {
-                postData(item);
-                
+                postData(item);  
             });
 
 
-       function postData(form) {
+    function postData(form) {
            form.addEventListener('submit', (e) => {
                e.preventDefault();
               
-               
                const statusMessage = document.createElement('img');
                statusMessage.src = message.loading;
                statusMessage.style.cssText = `
@@ -254,43 +254,67 @@ window.addEventListener('DOMContentLoaded', () => {
                     margin: 0 auto;
                `;
                form.insertAdjacentElement('afterend', statusMessage);
-                setTimeout( () => {
+                setTimeout(() => {
                     statusMessage.remove();
                 }, 2000); 
+           
+             //   const request = new XMLHttpRequest();old method - will use fetch()
+              //request.open('POST', 'server.php');
+            
 
-               const request = new XMLHttpRequest();
-               request.open('POST', 'server.php');
-             //  request.setRequestHeader('Content-type', 'multipart/form-data');
 
-               const formData = new FormData(form);
-               
-            //JSON former
+            const formData = new FormData(form); 
 
             const obj = {};
 
             formData.forEach( (value, key) => {
                 obj[key] = value;
             });
+            
 
-            const json = JSON.stringify(obj);
-            console.log(json);
-            request.send(json);
 
-               console.log(request.response);
-               request.addEventListener('load', () => {
+            fetch('server.php', {
+                 method: 'POST',
+                 headers: {
+                        'Content-type': 'multipart/form-data'
+                        },
+                 body: JSON.stringify(obj)
+             })
+             .then(data => data.text())
+             .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                form.reset();     
+                statusMessage.remove();
+             }).catch(() => {
+                showThanksModal(message.failure);
+             }).finally(() => {
+                form.reset(); 
+            });
+        })   
+}       
+            //JSON form
+
+       
+
+           /*  request.send(json);
+
+               console.log(request.response); */
+              /*  request.addEventListener('load', () => {
                    if (request.status === 200) {
-                        showThanksModal(message.success);
-                        form.reset();     
-                        statusMessage.remove();
+                       showThanksModal(message.success);
+                        form.reset(); 
                    } else {
                        showThanksModal(message.failure);
                    }
-               });
-           });
-       }
+               }); 
+           });*/
+      
+
+
 //show modal message 
 
-       function showThanksModal(message) {
+    function showThanksModal(message){
 
            const prevModalDialog = document.querySelector('.modal__dialog');
 
@@ -298,24 +322,23 @@ window.addEventListener('DOMContentLoaded', () => {
            modalOpen();
 
            const thanksModal = document.createElement('div');
-            thanksModal.classList.add('modal__dialog');
-            thanksModal.innerHTML = `
+                thanksModal.classList.add('modal__dialog');
+                thanksModal.innerHTML = `
                 <div class="modal__content">
                     <div data-close class="modal__close">&times;</div>
                     <div class="modal__title">${message}</div>
 
                </div>
-            `;
+                `;
             document.querySelector('.modal').append(thanksModal);
             setTimeout(() => {
                 thanksModal.remove();
                 prevModalDialog.style.display = 'block';
                 closeModalWindow();
-            }, 4000)
+            }, 4000);
+        }
 
-
-       }
-
-
-
+        fetch('db.json')
+        .then(data => data.json())
+        .then(res => console.log(res));
 });
