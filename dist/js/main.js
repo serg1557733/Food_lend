@@ -260,8 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 success: 'thanks we will phone you later',
                 failure: 'somthing wrong...'
             };
-        
-        console.log(forms);
+    
         forms.forEach((item)=> {
                 bindPostData(item);  
             });
@@ -367,21 +366,99 @@ window.addEventListener('DOMContentLoaded', () => {
             }, 4000);
         };
 
-       /*  fetch('db.json')
+     /*    fetch('db.json')
         .then(data => data.json())
-        .then(res => console.log(res)); */
+        .then(res => console.log(res));
+ */
 
-        //slider
+        
+        //slider and carusel constants
 
     const slides = document.querySelectorAll('.offer__slide'),
             prev = document.querySelector('.offer__slider-prev'),
             next = document.querySelector('.offer__slider-next'),
             total = document.querySelector('#total'),
-            current = document.querySelector('#current');
+            current = document.querySelector('#current'),
+            slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+            slidesField = document.querySelector('.offer__slider-inner'),
+            width = window.getComputedStyle(slidesWrapper).width;
 
+
+        //carusel
+
+        slidesField.style.width = 100 * slides.length +'%';
+        slidesField.style.display = 'flex';
+        slidesField.style.transition = '0.5s all';
+
+        slidesWrapper.style.overflow = 'hidden';
+
+        slides.forEach(slide => {
+            slide.style.width = width;
+        });
+
+        let slideIndex = 1;
+        let offset = 0;
+
+        if (slides.length < 10) {
+            total.textContent = `0${slides.length}`;
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+            total.textContent = slides.length;
+        }
+
+
+        next.addEventListener('click', () => {
+            if (offset == parseInt(width, 10) * (slides.length - 1)) {
+                offset = 0;
+            } else {
+                console.log(parseInt(width, 10) * (slides.length));
+                offset += parseInt(width, 10);
+            } 
+            slidesField.style.transform = `translateX(-${offset}px)`;
+
+            if (slideIndex == slides.length) {
+                slideIndex = 1;
+            } else {
+                slideIndex ++;
+            }
+
+            if (slides.length < 10) {
+                current.textContent = `0${slideIndex}`;
+            } else {
+                current.textContent = slideIndex;
+            }
+          
+        });
+
+        prev.addEventListener('click', () => {
+           
+            if (offset == 0) {
+                offset = parseInt(width, 10) * (slides.length - 1);
+            } else {
+                offset -= parseInt(width, 10);
+            }
+
+            slidesField.style.transform = `translateX(-${offset}px)`;
+
+            if (slideIndex == 1) {
+                slideIndex = slides.length;
+            } else {
+                slideIndex --;
+            }
+
+            if (slides.length < 10) {
+                current.textContent = `0${slideIndex}`;
+            } else {
+                current.textContent = slideIndex;
+            }
+        })
+
+
+            //simple slider
         
-        let slideIndex = 3;
-
+/* 
+        
         showSlids(slideIndex);
 
         if (slides.length < 10) {
@@ -398,9 +475,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 slideIndex = slides.length;
             }
             slides.forEach(item => {
-                item.style.display = "none"
+                item.style.display = "none";
             });
-            slides[slideIndex - 1].style.display = 'block';
+    
+                slides[slideIndex - 1].style.display = 'block';
+            
             if (slides.length < 10) {
                 current.textContent = `0${slideIndex}`;
             } else {
@@ -417,6 +496,6 @@ window.addEventListener('DOMContentLoaded', () => {
         next.addEventListener('click', () => {
             plussSlides(1);
         })
-
+ */
 
 });
