@@ -45,9 +45,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     //timer 
-    const deadline1 = new Date();
+    const deadline = '2022-02-15';
 
-    const deadline = `2021-${deadline1.getMonth()+1}-${deadline1.getDay()+12}`;
+    //const deadline = `2021-${deadline1.getMonth()+1}-${deadline1.getDay()+12}`; // always deadline 1 day
 
 
     function getTimeRemaining(endtime) {
@@ -105,6 +105,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal'),
         openModalId = setTimeout(openModalWindow, 500000);//off
+
+
 
     function modalOpen() {
         modalTrigger.forEach((button) => {
@@ -209,19 +211,19 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
 
- /*    getResourse('http://localhost:3000/menu')
+    getResourse('http://localhost:3000/menu')
     .then(data => {
         data.forEach( ({img, altimg, title, descr, price}) => {
             new MenuCard(img, altimg, title, descr, price, '.menu .container', "menu__item").render();
         });
-    }); */
+    });
 
-    axios.get('http://localhost:3000/menu')
+   /*  axios.get('http://localhost:3000/menu')
             .then(data => {
                 data.data.forEach( ({img, altimg, title, descr, price}) => {
                 new MenuCard(img, altimg, title, descr, price, '.menu .container', "menu__item").render();
             });
-        });
+        }); */
     /* new MenuCard(
         "img/tabs/vegy.jpg",
         "vegy",
@@ -566,5 +568,5 @@ window.addEventListener('DOMContentLoaded', () => {
             plussSlides(1);
         })
  */
-
+        
 });
